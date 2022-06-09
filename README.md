@@ -3,7 +3,7 @@ Implementation of ImPULSeS: Robust and Efficient Imbalanced Positive-Unlabeled
 Learning with Self-supervision
 
 <p align="center">
-  <img src="media/flowchart.png?raw=true" width="500"/>
+  <img src="media/flowchart.png?raw=true" width="600"/>
 </p>
 
 Create conda environment for impulses
