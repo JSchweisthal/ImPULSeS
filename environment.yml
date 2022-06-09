@@ -1,0 +1,8 @@
+name: impulses
+channels:
+  - pytorch
+dependencies:
+  - pytorch
+  - torchvision
+  - pyyaml
+  - pandas

@@ -1,0 +1,59 @@
+#########################################
+# pre-training options
+#########################################
+seed: 42 # sacred handles automatic seeding when passed in the config
+workers: 4 #8 didn't work
+batch_size: 128
+image_size: 224
+workers: 4 # here were 16
+start_epoch: 0
+epochs: 100
+dataset_dir: "../data/cifar10"
+dataset: "CIFAR10" # STL10
+
+# for CIFAR10: option for full or imbalanced data
+data_pretrain: "imbalanced" #options: ["all", "imbalanced"]
+
+# model options
+resnet: "resnet50"
+projection_dim: 128 # "[...] to project the representation to a 128-dimensional latent space"
+
+# loss options
+optimizer: "Adam" # or LARS (experimental)
+temperature: 0.5 # see appendix B.7.: Optimal temperature under different batch sizes
+
+### debiased contrastive loss
+debiased: True # False for NT-Xent
+tau_plus: 0.1
+
+# for starting training on a pre-trained model
+reload: False 
+# model_num: 100 # set to checkpoint number of start model
+
+# store / reload path of models
+model_path: "logs/CIFAR10/imbalanced/debiased" # set to the directory containing `checkpoint_##.tar` 
+
+
+##########################################
+# classfication head fine-tuning options
+##########################################
+
+epoch_num: 100 # set to checkpoint number of pretrained modell
+# logistic regression options
+logistic_batch_size: 256
+logistic_epochs: 100 #500
+
+data_classif: "PU" #options:  ["PU", "binary"]
+
+# PU ratio c (labeled positives / all positives for binary PU setting)
+PU_ratio: 0.2
+
+# classification with distorted prior
+prior_distortion_rate: 1.0
+
+# PU loss
+# by default imbalanced nnPU
+# loss_PU: # options: ["BCE", "wBCE", "nnPU"] # different classification losses
+
+# name of run for tensorboard
+name_run: cifar10_ImPULSeS
