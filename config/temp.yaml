@@ -8,7 +8,7 @@ image_size: 224
 workers: 4 # here were 16
 start_epoch: 0
 epochs: 100
-dataset_dir: "../data/cifar10"
+dataset_dir: "datasets/cifar10"
 dataset: "CIFAR10" # STL10
 
 # for CIFAR10: option for full or imbalanced data
