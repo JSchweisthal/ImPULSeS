@@ -9,7 +9,7 @@ workers: 4 # here were 16
 start_epoch: 0
 epochs: 100
 dataset_dir: "datasets/cifar10"
-dataset: "CIFAR10" # STL10
+dataset: "CIFAR10" # CIFAR100
 
 # for CIFAR10: option for full or imbalanced data
 data_pretrain: "imbalanced" #options: ["all", "imbalanced"]
