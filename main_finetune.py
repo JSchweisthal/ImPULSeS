@@ -138,7 +138,7 @@ class OversampledPULoss(nn.Module):
         self.prior_prime = prior_prime
         self.gamma = gamma
         self.beta = beta
-        self.loss_func = loss#lambda x: (torch.tensor(1., device=x.device) - torch.sign(x))/torch.tensor(2, device=x.device)
+        self.loss_func = loss
         self.nnPU = nnPU
         self.positive = 1
         self.unlabeled = -1
@@ -151,7 +151,7 @@ class OversampledPULoss(nn.Module):
             prior=self.prior
         if prior_prime is None:
             prior_prime=self.prior_prime
-        target = target*2 - 1 # else : target -1 == self.unlabeled in next row #!!!! -1 instead of 0!!
+        target = target*2 - 1
 
         positive, unlabeled = target == self.positive, target == self.unlabeled
         positive, unlabeled = positive.type(torch.float), unlabeled.type(torch.float)
@@ -186,7 +186,6 @@ if __name__ == "__main__":
     parser.add_argument("-c", "--config", type=str, required=True)
     args = parser.parse_args()
 
-    # config = yaml_config_hook("./config/config_tripnnpu.yaml")
     config = yaml_config_hook(f"./config/{args.config}.yaml")
     for k, v in config.items():
         parser.add_argument(f"--{k}", default=v, type=type(v))
@@ -215,7 +214,7 @@ if __name__ == "__main__":
                 # vehicles_1 = ["bicycle", "bus", "motorcycle", "pickup_truck", "train"]
                 # vehicles_2 = ["lawn_mower", "rocket", "streetcar", "tank", "tractor"]
                 if cls in [8, 13, 48, 58, 90, 41, 69, 81, 85, 89]:
-                    idxtargets_up_cls = idxs_cls[:int((1-args.PU_ratio)*len(idxs_cls))] # change here 0.2 for any other prop of labeled positive / all positives
+                    idxtargets_up_cls = idxs_cls[:int((1-args.PU_ratio)*len(idxs_cls))] 
                     idxtargets_up.extend(idxtargets_up_cls)
                     idxtargets_up.sort()
             idxtargets_up = torch.tensor(idxtargets_up)
@@ -254,7 +253,7 @@ if __name__ == "__main__":
                 if cls in [0, 1, 8, 9]:
                     idxs_cls = idxs_cls[:750]
                     if args.data_classif == "PU":  
-                        idxtargets_up_cls = idxs_cls[:int((1-args.PU_ratio)*len(idxs_cls))] # change here 0.2 for any other prop of labeled positive / all positives
+                        idxtargets_up_cls = idxs_cls[:int((1-args.PU_ratio)*len(idxs_cls))]
                 idxs.extend(idxs_cls)
                 idxs.sort()
                 if args.data_classif == "PU":  
@@ -270,7 +269,7 @@ if __name__ == "__main__":
 
             test_dataset.targets = torch.tensor(test_dataset.targets)
             test_dataset.targets = torch.where(torch.isin(test_dataset.targets, torch.tensor([0, 1, 8, 9])), 1, 0)
-            
+
     else:
         raise NotImplementedError
 
@@ -309,8 +308,6 @@ if __name__ == "__main__":
     model = model.to(args.device)
 
     optimizer = torch.optim.Adam(model.parameters(), lr=3e-4)
-    # criterion = torch.nn.CrossEntropyLoss()
-
     if args.data_classif == 'PU':
         if args.dataset == 'CIFAR10':  
             prior = ((1-args.PU_ratio)*3/33)/(1-args.PU_ratio*3/33) if "imbalanced" in args.data_pretrain else ((1-args.PU_ratio)*2/5)/(1-args.PU_ratio*2/5)
@@ -326,11 +323,11 @@ if __name__ == "__main__":
                 oversample = False
                 criterion = OversampledPULoss(prior=prior, prior_prime=0.5, nnPU=True, oversample=oversample) 
             elif args.loss_PU == 'BCE':
-                criterion = nn.BCEWithLogitsLoss() # pos_weight=torch.tensor(1220/817)
+                criterion = nn.BCEWithLogitsLoss() 
             elif args.loss_PU == 'wBCE':
                 if args.dataset == 'CIFAR10':
                     pos_weight = torch.tensor((10+ 1-args.PU_ratio)/args.PU_ratio) if "imbalanced" in args.data_pretrain else torch.tensor(torch.tensor((1.5+ 1-args.PU_ratio)/args.PU_ratio))
-                criterion = nn.BCEWithLogitsLoss(pos_weight=pos_weight) # pos_weight=torch.tensor(1220/817)
+                criterion = nn.BCEWithLogitsLoss(pos_weight=pos_weight) 
         else: 
             criterion = OversampledPULoss(prior=prior, prior_prime=0.5, nnPU=True, oversample=True) 
     
@@ -355,7 +352,6 @@ if __name__ == "__main__":
         )
         print(
             f"Epoch [{epoch}/{args.logistic_epochs}]\t Loss: {loss_epoch / len(arr_train_loader)}"
-            # \t Accuracy: {accuracy_epoch / len(arr_train_loader)}\t F1: {f1_epoch / len(arr_train_loader)}
         )
         writer.add_scalar("Loss/train", loss_epoch / len(train_loader), epoch)
 

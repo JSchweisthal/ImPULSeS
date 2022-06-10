@@ -108,18 +108,6 @@ def main(args):
 
             train_datasubset_pu = torch.utils.data.Subset(train_dataset, idxs)
 
-        elif "2class" in args.data_pretrain :
-            idxs = []
-            for cls in [args.class_pos, args.class_neg]:
-                idxs_cls = [i for i in range(len(train_dataset.targets)) if train_dataset.targets[i]==cls]
-                if cls == args.class_pos:
-                    if args.data_pretrain == "2class_imbalanced":
-                        idxs_cls = idxs_cls[:750]
-                idxs.extend(idxs_cls)
-            idxs.sort()
-
-            train_datasubset_pu = torch.utils.data.Subset(train_dataset, idxs)
-
     else:
         raise NotImplementedError
 
@@ -156,7 +144,6 @@ def main(args):
 
     model = model.to(args.device)
 
-    writer = None
     writer = SummaryWriter('runs/' + args.config)
 
     args.global_step = 0
@@ -175,10 +162,9 @@ def main(args):
 
         if epoch % 10 == 0:
             save_model(args, model, optimizer)
-
         
         writer.add_scalar("Loss/train", loss_epoch / len(train_loader), epoch)
-        # writer.add_scalar("Misc/learning_rate", lr, epoch)
+
         print(
             f"Epoch [{epoch}/{args.epochs}]\t Loss: {loss_epoch / len(train_loader)}\t lr: {round(lr, 5)}"
         )
@@ -195,7 +181,6 @@ if __name__ == "__main__":
     parser.add_argument("-c", "--config", type=str, required=True)
     args = parser.parse_args()
 
-    # config = yaml_config_hook("./config/config_tripnnpu.yaml")
     config = yaml_config_hook(f"./config/{args.config}.yaml")
     for k, v in config.items():
         parser.add_argument(f"--{k}", default=v, type=type(v))
@@ -210,6 +195,5 @@ if __name__ == "__main__":
         os.makedirs(args.model_path)
 
     args.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-
     
     main(args)
