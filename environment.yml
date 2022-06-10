@@ -6,3 +6,4 @@ dependencies:
   - torchvision
   - pyyaml
   - pandas
+  - tensorboard
