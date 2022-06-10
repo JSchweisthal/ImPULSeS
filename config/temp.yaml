@@ -49,7 +49,7 @@ data_classif: "PU" #options:  ["PU", "binary"]
 PU_ratio: 0.2
 
 # classification with distorted prior
-prior_distortion_rate: 1.0
+# prior_distortion_rate: 1.0
 
 # PU loss
 # by default imbalanced nnPU
