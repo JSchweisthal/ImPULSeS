@@ -1,6 +1,6 @@
 import os
 import torch
-from lars import LARS
+from .lars import LARS
 
 
 def load_optimizer(args, model, add_params_model=None):
