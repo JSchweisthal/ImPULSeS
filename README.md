@@ -6,7 +6,7 @@ Learning with Self-supervision
   <img src="media/flowchart.png?raw=true" width="600"/>
 </p>
 
-Create conda environment for impulses
+Create conda environment
 ```
 conda env create -f environment.yml
 conda activate impulses
