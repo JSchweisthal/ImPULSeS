@@ -270,7 +270,8 @@ if __name__ == "__main__":
 
             test_dataset.targets = torch.tensor(test_dataset.targets)
             test_dataset.targets = torch.where(torch.isin(test_dataset.targets, torch.tensor([0, 1, 8, 9])), 1, 0)
-
+            
+    else:
         raise NotImplementedError
 
     if args.data_pretrain == "all":
